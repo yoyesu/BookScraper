@@ -13,9 +13,6 @@ import com.gargoylesoftware.htmlunit.html.*;
 @Service
 public class Scraper implements BooksRepository{
 
-//        @Value("#{'${website.urls}'.split(',')}")
-//        List<String> urls;
-
         HtmlPage page;
         WebClient client = new WebClient();
         String bookTitle = "";
@@ -29,13 +26,13 @@ public class Scraper implements BooksRepository{
         public Book getBookByUrl(String url) {
             url = "https://www.epub.pub/book/" + url;
             String finalStructure = getFinalUrlStructure(url);
-            //https://asset.epub.pub/epub/stunich-34.epub/text/part0034.html
+
             Book responseDTO = new Book();
-            //Traversing through the urls
+
             for(int i = 1; i == i; i++){
                 String part = i < 10 ? "0" + i + ".html" : "" + i + ".html";
                 String changingUrl = finalStructure + part;
-                if(extractDataFromTheSun(responseDTO,changingUrl) == 400){
+                if(gatherBookLines(responseDTO,changingUrl) == 400){
                     break;
                 }
 
@@ -105,17 +102,13 @@ public class Scraper implements BooksRepository{
         }
     }
 
-    private int extractDataFromTheSun(Book responseDTO, String url) {
+    private int gatherBookLines(Book responseDTO, String url) {
 
             try {
-                //loading the HTML to a Document Object
                 page = getWebPage(url);
 
-                //Selecting the element which contains the ad list
                 List<DomElement> textBoxes = page.getElementsByTagName("p");
 
-
-                //traversing through the elements
                 for (DomElement p: textBoxes) {
                     responseDTO.getSentences().add(p.getVisibleText());
                 }

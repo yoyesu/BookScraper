@@ -18,6 +18,7 @@ public class Scraper implements BooksRepository{
 
         HtmlPage page;
         WebClient client = new WebClient();
+        String bookTitle = "";
 
         private HtmlPage getWebPage(String url) throws IOException {
             client.getOptions().setCssEnabled(false);
@@ -70,6 +71,7 @@ public class Scraper implements BooksRepository{
         String secondUrl = "";
         try {
             page = getWebPage(url);
+            bookTitle = page.getElementById("article-title").getVisibleText();
             List<HtmlAnchor> listOfAnchors = page.getAnchors();
             for(HtmlAnchor anchor : listOfAnchors){
                 if(anchor.hasAttribute("data-readid")){
@@ -84,10 +86,10 @@ public class Scraper implements BooksRepository{
         return secondUrl;
     }
 
-    private static void generateFileFromBookDTO(Book responseDTO) {
+    private void generateFileFromBookDTO(Book responseDTO) {
         try
         {
-            PrintWriter pr = new PrintWriter("file.txt");
+            PrintWriter pr = new PrintWriter(bookTitle + ".txt");
 
             Object[] listToArray = responseDTO.getSentences().toArray();
             for (int i = 0; i< responseDTO.getSentences().size() ; i++)
